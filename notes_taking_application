@@ -1,0 +1,141 @@
+Imports
+python
+Copy code
+from user_interface import display_menu, get_user_choice
+from notes_manager import load_notes, save_notes, add_note, edit_note, delete_note, view_notes
+Imports: This section imports functions from two modules, user_interface and notes_manager. These functions handle displaying the menu, getting user input, and managing notes (loading, saving, adding, editing, deleting, and viewing).
+Main Function
+python
+Copy code
+def main():
+    notes = load_notes()  # Load existing notes
+main(): The main function is where the program starts executing. It first loads existing notes from a file using the load_notes() function.
+Infinite Loop
+python
+Copy code
+    while True:
+        display_menu()
+        choice = get_user_choice()
+Loop: An infinite loop keeps the program running until the user chooses to exit. Inside the loop:
+display_menu(): Displays the options available to the user.
+get_user_choice(): Gets the user's choice as input.
+Handling User Choices
+python
+Copy code
+        if choice == '1':
+            title = input("Enter note title: ")
+            content = input("Enter note content: ")
+            add_note(notes, title, content)
+Choice 1: If the user selects option 1, they are prompted to enter a note title and content. The add_note() function is called to append the new note to the notes list.
+python
+Copy code
+        elif choice == '2':
+            view_notes(notes)
+Choice 2: If the user selects option 2, the view_notes() function is called to display all existing notes.
+python
+Copy code
+        elif choice == '3':
+            index = int(input("Enter note index to edit: ")) - 1
+            new_title = input("Enter new title: ")
+            new_content = input("Enter new content: ")
+            edit_note(notes, index, new_title, new_content)
+Choice 3: For editing a note, the user is prompted to enter the index of the note they wish to edit (adjusted by subtracting 1 for zero-based indexing). Then, they are asked for new title and content, which are passed to the edit_note() function.
+python
+Copy code
+        elif choice == '4':
+            index = int(input("Enter note index to delete: ")) - 1
+            delete_note(notes, index)
+Choice 4: Similar to editing, the user is prompted for the index of the note to delete. The delete_note() function removes the specified note from the list.
+python
+Copy code
+        elif choice == '5':
+            save_notes(notes)
+            break
+Choice 5: When the user chooses to exit, save_notes() is called to save all notes to a file, and the loop breaks to terminate the program.
+python
+Copy code
+        else:
+            print("Invalid choice, please try again.")
+Invalid Choice: If the input doesn’t match any option, an error message is displayed, and the loop continues.
+Entry Point Check
+python
+Copy code
+if __name__ == "__main__":
+    main()
+This condition checks if the script is being run directly (as opposed to being imported). If true, it calls the main() function.
+Note Management Functions
+Load Notes
+python
+Copy code
+def load_notes():
+    notes = []
+    try:
+        with open("notes.txt", "r") as file:
+            for line in file:
+                title, content = line.strip().split("|")
+                notes.append({"title": title, "content": content})
+    except FileNotFoundError:
+        pass
+    return notes
+load_notes(): This function reads notes from a file. Each line in the file is split into title and content using the | character. If the file doesn’t exist, it simply returns an empty list.
+Save Notes
+python
+Copy code
+def save_notes(notes):
+    with open("notes.txt", "w") as file:
+        for note in notes:
+            file.write(f"{note['title']}|{note['content']}\n")
+save_notes(): This function writes all notes back to the file, formatting them as title|content.
+Add Note
+python
+Copy code
+def add_note(notes, title, content):
+    notes.append({"title": title, "content": content})
+add_note(): This function appends a new note (as a dictionary) to the notes list.
+View Notes
+python
+Copy code
+def view_notes(notes):
+    for i, note in enumerate(notes):
+        print(f"{i+1}. {note['title']}")
+        print(f"   {note['content']}\n")
+view_notes(): This function iterates over the notes and prints the title and content, with indexing starting from 1 for user-friendliness.
+Edit Note
+python
+Copy code
+def edit_note(notes, index, new_title, new_content):
+    if 0 <= index < len(notes):
+        notes[index]["title"] = new_title
+        notes[index]["content"] = new_content
+    else:
+        print("Invalid index.")
+edit_note(): This function updates the title and content of a note at a specified index. It checks if the index is valid.
+Delete Note
+python
+Copy code
+def delete_note(notes, index):
+    if 0 <= index < len(notes):
+        del notes[index]
+    else:
+        print("Invalid index.")
+delete_note(): Similar to edit_note(), this function deletes a note if the index is valid.
+Display Menu
+python
+Copy code
+def display_menu():
+    print("\nOptions:")
+    print("1. Add Note")
+    print("2. View Notes")
+    print("3. Edit Note")
+    print("4. Delete Note")
+    print("5. Exit")
+display_menu(): This function prints the available options for the user.
+Get User Choice
+python
+Copy code
+def get_user_choice():
+    choice = input("Choose an operation: ")
+    return choice
+get_user_choice(): This function prompts the user for input and returns the choice.
+Summary
+This code provides a simple command-line interface for managing notes. It allows users to add, view, edit, and delete notes, with persistent storage through a text file. Each function has a specific responsibility, making the code modular and easier to maintain.
